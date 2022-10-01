@@ -1,6 +1,6 @@
 import { ChoiceItem } from "../types/ChoiceItem"
-import { Subject, Observable } from "rxjs"
-import { Dispatch, Ref, SetStateAction } from "react"
+import { Subject } from "rxjs"
+import { Dispatch, SetStateAction } from "react"
 
 type State = {
   visitsItem: ChoiceItem | null
@@ -30,6 +30,11 @@ export const store = {
   unsubscribe: () => subject$.unsubscribe,
   visit: (item: ChoiceItem) => {
     state = { ...state, visitsItem: item }
+    subject$.next(state)
+  },
+  select: (item: ChoiceItem) => {
+    const selected = [...state.selected, item]
+    state = { ...state, selected }
     subject$.next(state)
   },
 }
