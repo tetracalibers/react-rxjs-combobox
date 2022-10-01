@@ -41,6 +41,8 @@ type AutoCompleteProps = {
 
 export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+
   const filtered = useInputFilter(inputRef, choices)
 
   const inputId = useMemo(() => nanoid(), [])
@@ -60,7 +62,7 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
         type="text"
         id={inputId}
       />
-      <SelectList label={label} items={filtered} id={listId} />
+      <SelectList label={label} items={filtered} id={listId} ref={listRef} />
     </Root>
   )
 }

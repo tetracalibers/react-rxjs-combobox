@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { ComponentPropsWithRef } from "react"
+import { ComponentPropsWithRef, ForwardedRef, forwardRef } from "react"
 import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
 
@@ -82,13 +82,16 @@ interface SelectListProps extends ComponentPropsWithRef<"ul"> {
   id: string
 }
 
-export const SelectList = ({ items, label, id, ...props }: SelectListProps) => {
+const _SelectList = (
+  { items, label, id, ...props }: SelectListProps,
+  ref: ForwardedRef<HTMLUListElement>,
+) => {
   const name = _.snakeCase(label)
   const getItemKey = (value: string | number) =>
     `${name}__${_.snakeCase(value.toString())}`
 
   return (
-    <Ul {...props} role="listbox" id={id}>
+    <Ul {...props} role="listbox" id={id} ref={ref}>
       {items.map((item, idx) => (
         <li
           key={getItemKey(item.value)}
@@ -103,3 +106,5 @@ export const SelectList = ({ items, label, id, ...props }: SelectListProps) => {
     </Ul>
   )
 }
+
+export const SelectList = forwardRef(_SelectList)
