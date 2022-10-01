@@ -1,5 +1,5 @@
 import { VisuallyHidden } from "@polym/a11y"
-import { ForwardedRef, forwardRef } from "react"
+import { ComponentPropsWithRef, ForwardedRef, forwardRef } from "react"
 import styled from "styled-components"
 
 const Root = styled.div``
@@ -60,18 +60,19 @@ const Label = styled.label`
   }
 `
 
-type FloatLabelInputProps = {
+interface FloatLabelInputProps extends ComponentPropsWithRef<"input"> {
   label: string
+  id: string
 }
 
 const _FloatLabelInput = (
-  { label }: FloatLabelInputProps,
+  { label, id, ...props }: FloatLabelInputProps,
   ref: ForwardedRef<HTMLInputElement>,
 ) => {
   return (
     <Root>
-      <Input placeholder={label} ref={ref} />
-      <Label data-label={label}>
+      <Input {...props} placeholder={label} ref={ref} id={id} />
+      <Label data-label={label} htmlFor={id}>
         <VisuallyHidden>{label}</VisuallyHidden>
       </Label>
     </Root>

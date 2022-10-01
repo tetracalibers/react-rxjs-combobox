@@ -1,4 +1,5 @@
 import _ from "lodash"
+import { ComponentPropsWithRef } from "react"
 import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
 
@@ -6,6 +7,7 @@ const Ul = styled.ul`
   --bg-color: #f7f9ff;
   --shadow-color: #b1b2ff;
   --float-color: #8c1bab;
+  --gap: 1rem;
 
   /* メニューをスクロール可能にする */
   max-height: 12em;
@@ -63,7 +65,7 @@ const Ul = styled.ul`
 
   && > li[role="option"] {
     display: block;
-    padding: var(--gap) 0;
+    padding: var(--gap);
     border: none;
   }
 
@@ -74,20 +76,29 @@ const Ul = styled.ul`
   }
 `
 
-type SelectListProps = {
+interface SelectListProps extends ComponentPropsWithRef<"ul"> {
   items: ChoiceItem[]
   label: string
+  id: string
 }
 
-export const SelectList = ({ items, label }: SelectListProps) => {
+export const SelectList = ({ items, label, id, ...props }: SelectListProps) => {
   const name = _.snakeCase(label)
   const getItemKey = (value: string | number) =>
     `${name}__${_.snakeCase(value.toString())}`
 
   return (
-    <Ul>
+    <Ul {...props} role="listbox" id={id}>
       {items.map((item, idx) => (
-        <li key={getItemKey(item.value)}>{item.label ?? item.value}</li>
+        <li
+          key={getItemKey(item.value)}
+          role="option"
+          aria-selected="false"
+          tabIndex={-1}
+          id={`${id}_item${idx}`}
+        >
+          {item.label ?? item.value}
+        </li>
       ))}
     </Ul>
   )
