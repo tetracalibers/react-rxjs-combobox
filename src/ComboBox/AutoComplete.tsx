@@ -5,6 +5,7 @@ import { SelectList } from "./SelectList"
 import { useMemo, useRef } from "react"
 import { useInputFilter } from "./hooks/useInputFilter"
 import { nanoid } from "nanoid"
+import { useKeyCommand } from "./hooks/useKeyCommand"
 
 const Root = styled.div`
   --icon-size: 2rem;
@@ -47,6 +48,8 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
 
   const inputId = useMemo(() => nanoid(), [])
   const listId = useMemo(() => nanoid(), [])
+
+  useKeyCommand(listRef)
 
   return (
     <Root>
