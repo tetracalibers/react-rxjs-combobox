@@ -51,7 +51,7 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
       <FloatLabelInput
         label={label}
         ref={inputRef}
-        aria-owns=""
+        aria-owns={listId}
         aria-autocomplete="list"
         role="combobox"
         aria-expanded="true"
