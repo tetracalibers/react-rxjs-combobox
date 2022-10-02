@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
 import { FloatLabelInput } from "./FloatLabelInput"
 import { SelectList } from "./SelectList"
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useInputFilter } from "./hooks/useInputFilter"
 import { nanoid } from "nanoid"
 import { ToggleArrowButton } from "./ToggleArrowButton"
@@ -33,6 +33,8 @@ type AutoCompleteProps = {
 }
 
 export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
 
@@ -54,17 +56,25 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
     const evtSubsc = keyEvt$.subscribe(e => {
       const key = e.key
       if (key === "ArrowDown") {
+        if (!isOpen) setIsOpen(true)
         return next(e)?.focus()
       }
       if (key === "ArrowUp") {
         return prev(e)?.focus()
+      }
+      if (key === "Tab") {
+        return setIsOpen(false)
+      }
+      if (key === "Escape") {
+        inputRef.current?.focus()
+        return setIsOpen(false)
       }
     })
 
     return () => {
       evtSubsc.unsubscribe()
     }
-  }, [filtered])
+  }, [filtered, isOpen])
 
   return (
     <Root>
@@ -79,9 +89,19 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
         autoComplete="off"
         type="text"
         id={inputId}
+        onChange={() => setIsOpen(true)}
       />
-      <ToggleArrowButton isOpen={true} />
-      <SelectList label={label} items={filtered} id={listId} ref={listRef} />
+      <ToggleArrowButton
+        isOpen={isOpen}
+        onClick={() => setIsOpen(flg => !flg)}
+      />
+      <SelectList
+        label={label}
+        items={filtered}
+        id={listId}
+        ref={listRef}
+        hidden={!isOpen}
+      />
     </Root>
   )
 }

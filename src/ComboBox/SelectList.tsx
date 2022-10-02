@@ -80,10 +80,11 @@ interface SelectListProps extends ComponentPropsWithRef<"ul"> {
   items: ChoiceItem[]
   label: string
   id: string
+  hidden: boolean
 }
 
 const _SelectList = (
-  { items, label, id, ...props }: SelectListProps,
+  { items, label, id, hidden, ...props }: SelectListProps,
   ref: ForwardedRef<HTMLUListElement>,
 ) => {
   const name = _.snakeCase(label)
@@ -92,17 +93,18 @@ const _SelectList = (
 
   return (
     <Ul {...props} role="listbox" id={id} ref={ref}>
-      {items.map((item, idx) => (
-        <li
-          key={getItemKey(item.value)}
-          role="option"
-          aria-selected="false"
-          tabIndex={-1}
-          id={`${id}__item_${idx}`}
-        >
-          {item.label ?? item.value}
-        </li>
-      ))}
+      {!hidden &&
+        items.map((item, idx) => (
+          <li
+            key={getItemKey(item.value)}
+            role="option"
+            aria-selected="false"
+            tabIndex={-1}
+            id={`${id}__item_${idx}`}
+          >
+            {item.label ?? item.value}
+          </li>
+        ))}
     </Ul>
   )
 }

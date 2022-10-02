@@ -1,7 +1,7 @@
 import { IconButton } from "./IconButton"
 import { VscChevronDown } from "react-icons/vsc"
 import styled from "styled-components"
-import { ComponentPropsWithRef } from "react"
+import { ComponentPropsWithRef, forwardRef, ForwardedRef } from "react"
 
 const ArrowIconButton = styled(IconButton).attrs({
   icon: <VscChevronDown />,
@@ -37,15 +37,18 @@ interface ToggleArrowButtonProps extends ComponentPropsWithRef<"button"> {
   isOpen: boolean
 }
 
-export const ToggleArrowButton = ({
-  isOpen,
-  ...props
-}: ToggleArrowButtonProps) => {
+const _ToggleArrowButton = (
+  { isOpen, ...props }: ToggleArrowButtonProps,
+  ref: ForwardedRef<HTMLButtonElement>,
+) => {
   return (
     <ArrowIconButton
-      label={isOpen ? "ppen" : "close"}
+      label={isOpen ? "open" : "close"}
       data-open={isOpen}
+      ref={ref}
       {...props}
     />
   )
 }
+
+export const ToggleArrowButton = forwardRef(_ToggleArrowButton)
