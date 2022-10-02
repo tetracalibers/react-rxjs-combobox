@@ -12,6 +12,7 @@ import { useUnFocus } from "./hooks/useUnFocus"
 const Root = styled.div`
   display: flex;
   position: relative;
+  width: 100%;
 `
 
 const getChildren = <T extends HTMLElement>(parent: T | null): HTMLElement[] =>

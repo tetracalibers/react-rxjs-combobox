@@ -2,7 +2,9 @@ import { VisuallyHidden } from "@polym/a11y"
 import { ComponentPropsWithRef, ForwardedRef, forwardRef } from "react"
 import styled from "styled-components"
 
-const Root = styled.div``
+const Root = styled.div`
+  width: 100%;
+`
 
 const Input = styled.input`
   box-sizing: border-box;
@@ -17,7 +19,7 @@ const Input = styled.input`
     rgb(0 0 0 / 5%) 0px 1px 1px 0px;
   margin: 0;
   padding: 1.8rem 1rem 0.6rem;
-  font-size: 1rem;
+  width: 100%;
 
   /* 表示状態を検知するために透明にして残しておく */
   &::placeholder {
@@ -42,6 +44,7 @@ const Label = styled.label`
     transform-origin: left top;
     transition: transform 0.2s ease;
     position: relative;
+    line-height: 1;
   }
 
   ${Input}:placeholder-shown + &::before {

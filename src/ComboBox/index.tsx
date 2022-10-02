@@ -9,7 +9,7 @@ const Root = styled.div`
   width: 250px;
   height: 50vh;
   margin: 0 auto;
-  font-size: 18px;
+  font-size: 16px;
   color: #60666d;
 `
 
