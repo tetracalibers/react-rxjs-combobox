@@ -7,6 +7,7 @@ import { useInputFilter } from "./hooks/useInputFilter"
 import { nanoid } from "nanoid"
 import { ToggleArrowButton } from "./ToggleArrowButton"
 import { fromEvent, merge } from "rxjs"
+import { useUnFocus } from "./hooks/useUnFocus"
 
 const Root = styled.div`
   display: flex;
@@ -37,11 +38,14 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
 
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
 
   const filtered = useInputFilter(inputRef, choices)
 
   const inputId = useMemo(() => nanoid(), [])
   const listId = useMemo(() => nanoid(), [])
+
+  useUnFocus(() => setIsOpen(false), rootRef)
 
   useEffect(() => {
     const elems = [inputRef.current!, ...getChildren(listRef.current)]
@@ -77,7 +81,7 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
   }, [filtered, isOpen])
 
   return (
-    <Root>
+    <Root ref={rootRef}>
       <FloatLabelInput
         label={label}
         ref={inputRef}
