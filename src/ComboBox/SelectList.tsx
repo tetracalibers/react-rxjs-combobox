@@ -81,10 +81,11 @@ interface SelectListProps extends ComponentPropsWithRef<"ul"> {
   label: string
   id: string
   hidden: boolean
+  onSelectItem?: (item: ChoiceItem) => void
 }
 
 const _SelectList = (
-  { items, label, id, hidden, ...props }: SelectListProps,
+  { items, label, id, hidden, onSelectItem, ...props }: SelectListProps,
   ref: ForwardedRef<HTMLUListElement>,
 ) => {
   const name = _.snakeCase(label)
@@ -101,6 +102,7 @@ const _SelectList = (
             aria-selected="false"
             tabIndex={-1}
             id={`${id}__item_${idx}`}
+            onClick={() => onSelectItem && onSelectItem(item)}
           >
             {item.label ?? item.value}
           </li>

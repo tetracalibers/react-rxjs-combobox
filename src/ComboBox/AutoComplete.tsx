@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
 import { FloatLabelInput } from "./FloatLabelInput"
 import { SelectList } from "./SelectList"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useInputFilter } from "./hooks/useInputFilter"
 import { nanoid } from "nanoid"
 import { ToggleArrowButton } from "./ToggleArrowButton"
@@ -40,7 +40,17 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
   const listRef = useRef<HTMLUListElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
 
-  const filtered = useInputFilter(inputRef, choices)
+  const { filtered, word, updateWord: setWord } = useInputFilter(choices)
+
+  const typing = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!isOpen) setIsOpen(true)
+    setWord(e.target.value)
+  }
+
+  const select = (item: ChoiceItem) => {
+    setIsOpen(false)
+    setWord(item.label)
+  }
 
   const inputId = useMemo(() => nanoid(), [])
   const listId = useMemo(() => nanoid(), [])
@@ -93,7 +103,8 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
         autoComplete="off"
         type="text"
         id={inputId}
-        onChange={() => setIsOpen(true)}
+        value={word}
+        onChange={typing}
       />
       <ToggleArrowButton
         isOpen={isOpen}
@@ -105,6 +116,7 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
         id={listId}
         ref={listRef}
         hidden={!isOpen}
+        onSelectItem={select}
       />
     </Root>
   )

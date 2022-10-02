@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction } from "react"
 type State = {
   all: ChoiceItem[]
   filtered: ChoiceItem[]
+  selected: ChoiceItem | null
   word: string
 }
 
@@ -13,6 +14,7 @@ const subject$ = new Subject<State>()
 const emptyState: State = {
   all: [],
   filtered: [],
+  selected: null,
   word: "",
 }
 
@@ -28,4 +30,7 @@ export const store = {
     return subject$.subscribe(setState)
   },
   unsubscribe: () => subject$.unsubscribe,
+  search: (word: string) => {
+    state = { ...state, word }
+  },
 }

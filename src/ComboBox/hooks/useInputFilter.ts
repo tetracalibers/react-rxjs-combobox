@@ -1,30 +1,29 @@
-import { RefObject, useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { ChoiceItem } from "../types/ChoiceItem"
-import { fromEvent } from "rxjs"
-import { map } from "rxjs/operators"
+import { BehaviorSubject } from "rxjs"
 
-export const useInputFilter = (
-  inputRef: RefObject<HTMLInputElement>,
-  all: ChoiceItem[],
-) => {
+export const useInputFilter = (all: ChoiceItem[]) => {
   const [filtered, setFiltered] = useState(all)
+  const [word, setWord] = useState("")
+
+  const subject$ = useMemo(() => new BehaviorSubject<string>(""), [])
 
   useEffect(() => {
-    const searchWord$ = fromEvent(inputRef.current!, "input").pipe(
-      map(e => (e.target as HTMLInputElement).value),
-      map(s => s.trim().toLowerCase()),
-    )
+    const subscription = subject$.subscribe(s => {
+      setWord(s)
+      setFiltered(
+        all.filter(({ label }) =>
+          label.trim().toLowerCase().includes(s.trim().toLowerCase()),
+        ),
+      )
+    })
 
-    const filtered$ = searchWord$.pipe(
-      map(s =>
-        all.filter(({ label }) => label.trim().toLowerCase().includes(s)),
-      ),
-    )
-
-    const subscription = filtered$.subscribe(items => setFiltered(items))
-
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
-  return filtered
+  const updateWord = (word: string) => subject$.next(word)
+
+  return { filtered, word, updateWord } as const
 }

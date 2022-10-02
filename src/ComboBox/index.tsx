@@ -6,7 +6,7 @@ import styled from "styled-components"
 const Root = styled.div`
   position: relative;
   display: block;
-  width: 200px;
+  width: 250px;
   height: 50vh;
   margin: 0 auto;
   font-size: 18px;
