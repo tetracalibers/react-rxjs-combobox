@@ -98,7 +98,7 @@ const _SelectList = (
           role="option"
           aria-selected="false"
           tabIndex={-1}
-          id={`${id}_item${idx}`}
+          id={`${id}__item_${idx}`}
         >
           {item.label ?? item.value}
         </li>

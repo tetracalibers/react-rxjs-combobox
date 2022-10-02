@@ -4,9 +4,15 @@ import { pluck } from "rxjs/operators"
 
 export const useKeyCommand = <T extends HTMLElement>(ref: RefObject<T>) => {
   useEffect(() => {
-    const key$ = fromEvent(ref.current!, "keydown").pipe(pluck("key"))
-    const subscription = key$.subscribe(key => console.log(key))
+    const keyEvent$ = fromEvent(ref.current!, "keydown")
+    const key$ = keyEvent$.pipe(pluck("key"))
 
-    return () => subscription.unsubscribe()
+    const evtSubsc = keyEvent$.subscribe(e => console.log(e.target))
+    const keySubsc = key$.subscribe(key => console.log(key))
+
+    return () => {
+      evtSubsc.unsubscribe()
+      keySubsc.unsubscribe()
+    }
   }, [])
 }
