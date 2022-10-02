@@ -50,6 +50,7 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
   const select = (item: ChoiceItem) => {
     setIsOpen(false)
     setWord(item.label)
+    inputRef.current?.focus()
   }
 
   const inputId = useMemo(() => nanoid(), [])

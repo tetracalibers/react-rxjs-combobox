@@ -1,5 +1,10 @@
 import _ from "lodash"
-import { ComponentPropsWithRef, ForwardedRef, forwardRef } from "react"
+import {
+  ComponentPropsWithRef,
+  ForwardedRef,
+  forwardRef,
+  KeyboardEvent,
+} from "react"
 import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
 
@@ -92,6 +97,12 @@ const _SelectList = (
   const getItemKey = (value: string | number) =>
     `${name}__${_.snakeCase(value.toString())}`
 
+  const selectByEnter = (e: KeyboardEvent<HTMLLIElement>, item: ChoiceItem) => {
+    if (e.key === "Enter") {
+      onSelectItem && onSelectItem(item)
+    }
+  }
+
   return (
     <Ul {...props} role="listbox" id={id} ref={ref}>
       {!hidden &&
@@ -103,6 +114,7 @@ const _SelectList = (
             tabIndex={-1}
             id={`${id}__item_${idx}`}
             onClick={() => onSelectItem && onSelectItem(item)}
+            onKeyDown={e => selectByEnter(e, item)}
           >
             {item.label ?? item.value}
           </li>
