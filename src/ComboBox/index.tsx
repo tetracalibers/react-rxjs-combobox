@@ -2,8 +2,9 @@ import _ from "lodash"
 import { ChoiceItem } from "./types/ChoiceItem"
 import { AutoComplete } from "./AutoComplete"
 import styled from "styled-components"
+import { memo } from "react"
 
-const Root = styled.div`
+const _Root = styled.div`
   position: relative;
   display: block;
   width: 250px;
@@ -12,6 +13,8 @@ const Root = styled.div`
   font-size: 16px;
   color: #60666d;
 `
+
+const Root = memo(_Root)
 
 type ComboBoxProps = {
   choices: ChoiceItem[]

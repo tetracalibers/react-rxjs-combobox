@@ -5,7 +5,7 @@ import { ComponentPropsWithRef, forwardRef, ForwardedRef, memo } from "react"
 
 const ArrowIcon = memo(VscChevronDown)
 
-const ArrowIconButton = styled(IconButton).attrs({
+const _ArrowIconButton = styled(IconButton).attrs({
   icon: <ArrowIcon />,
 })`
   --icon-size: 1.5rem;
@@ -34,6 +34,8 @@ const ArrowIconButton = styled(IconButton).attrs({
     transform: rotate(180deg);
   }
 `
+
+const ArrowIconButton = memo(_ArrowIconButton)
 
 interface ToggleArrowButtonProps extends ComponentPropsWithRef<"button"> {
   isOpen: boolean

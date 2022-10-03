@@ -130,4 +130,4 @@ const _SelectList = (
   )
 }
 
-export const SelectList = forwardRef(_SelectList)
+export const SelectList = memo(forwardRef(_SelectList))

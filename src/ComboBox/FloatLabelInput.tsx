@@ -87,4 +87,4 @@ const _FloatLabelInput = (
   )
 }
 
-export const FloatLabelInput = forwardRef(_FloatLabelInput)
+export const FloatLabelInput = memo(forwardRef(_FloatLabelInput))

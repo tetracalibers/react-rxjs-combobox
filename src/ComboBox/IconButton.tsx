@@ -5,6 +5,7 @@ import {
   forwardRef,
   ComponentPropsWithRef,
   ReactElement,
+  memo,
 } from "react"
 
 interface IconButtonProps extends ComponentPropsWithRef<"button"> {
@@ -24,4 +25,4 @@ const _IconButton = (
   )
 }
 
-export const IconButton = forwardRef(_IconButton)
+export const IconButton = memo(forwardRef(_IconButton))
