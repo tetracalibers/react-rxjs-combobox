@@ -4,12 +4,13 @@ import {
   ForwardedRef,
   forwardRef,
   KeyboardEvent,
+  memo,
   useCallback,
 } from "react"
 import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
 
-const Ul = styled.ul`
+const _Ul = styled.ul`
   --bg-color: #f7f9ff;
   --shadow-color: #b1b2ff;
   --float-color: #8c1bab;
@@ -68,19 +69,24 @@ const Ul = styled.ul`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+`
 
-  && > li[role="option"] {
+const _Li = styled.li`
+  &[role="option"] {
     display: block;
     padding: var(--gap);
     border: none;
   }
 
-  && > li[role="option"]:hover,
-  && > li[role="option"]:focus {
+  &[role="option"]:hover,
+  &[role="option"]:focus {
     background-image: linear-gradient(to right, #fdeb71 10%, #f8d800 100%);
     box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
   }
 `
+
+const Ul = memo(_Ul)
+const Li = memo(_Li)
 
 interface SelectListProps extends ComponentPropsWithRef<"ul"> {
   items: ChoiceItem[]
@@ -107,16 +113,18 @@ const _SelectList = (
     <Ul {...props} role="listbox" id={id} ref={ref}>
       {!hidden &&
         items.map(item => (
-          <li
+          <Li
             key={`${id}__item_${item.value}`}
             role="option"
             aria-selected="false"
             tabIndex={-1}
             onClick={() => onSelectItem && onSelectItem(item)}
-            onKeyDown={e => selectByEnter(e, item)}
+            onKeyDown={(e: KeyboardEvent<HTMLLIElement>) =>
+              selectByEnter(e, item)
+            }
           >
             {item.label}
-          </li>
+          </Li>
         ))}
     </Ul>
   )
