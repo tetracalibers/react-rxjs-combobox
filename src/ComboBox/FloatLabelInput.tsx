@@ -6,7 +6,7 @@ const _Root = styled.div`
   width: 100%;
 `
 
-const Input = styled.input`
+const _Input = styled.input`
   box-sizing: border-box;
   outline: none;
   font-size: 16px;
@@ -25,9 +25,23 @@ const Input = styled.input`
   &::placeholder {
     color: rgba(255, 255, 255, 0);
   }
+
+  &:placeholder-shown + label::before {
+    transform: translate3d(0, -2.2rem, 0) scale3d(1, 1, 1);
+  }
+
+  &:focus + label::before {
+    transform: translate3d(0, -3.12rem, 0) scale3d(0.82, 0.82, 1);
+  }
+
+  /* focus時と入力済みの場合 */
+  &:focus + label::before,
+  &:not(:placeholder-shown) + label::before {
+    color: var(--float-color);
+  }
 `
 
-const Label = styled.label`
+const _Label = styled.label`
   display: flex;
   position: relative;
   max-height: 0;
@@ -45,26 +59,14 @@ const Label = styled.label`
     transition: transform 0.2s ease;
     position: relative;
     line-height: 1;
-  }
-
-  ${Input}:placeholder-shown + &::before {
-    transform: translate3d(0, -2.2rem, 0) scale3d(1, 1, 1);
-  }
-
-  &::before,
-  ${Input}:focus + &::before {
     transform: translate3d(0, -3.12rem, 0) scale3d(0.82, 0.82, 1);
-  }
-
-  /* focus時と入力済みの場合 */
-  ${Input}:focus + &::before,
-  ${Input}:not(:placeholder-shown) + &::before {
-    color: var(--float-color);
   }
 `
 
 const Root = memo(_Root)
 const VisuallyHidden = memo(_VisuallyHidden)
+const Label = memo(_Label)
+const Input = memo(_Input)
 
 interface FloatLabelInputProps extends ComponentPropsWithRef<"input"> {
   label: string
