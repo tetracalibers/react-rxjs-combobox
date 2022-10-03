@@ -2,12 +2,10 @@ import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
 import { FloatLabelInput } from "./FloatLabelInput"
 import { SelectList } from "./SelectList"
-import { ChangeEvent, useMemo, useRef } from "react"
-import { useInputFilter } from "./hooks/useInputFilter"
+import { useMemo, useRef } from "react"
 import { nanoid } from "nanoid"
 import { ToggleArrowButton } from "./ToggleArrowButton"
-import { useUnFocus } from "./hooks/useUnFocus"
-import { ScanTarget, useScanToggleList } from "./hooks/useScanToggleList"
+import { useAutoComplete } from "./hooks/useAutoComplete"
 
 const Root = styled.div`
   display: flex;
@@ -25,36 +23,8 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
   const listRef = useRef<HTMLUListElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
 
-  const { filtered, word, updateWord: setWord } = useInputFilter(choices)
-
-  const scanTargets: ScanTarget<HTMLInputElement | HTMLUListElement>[] =
-    useMemo(
-      () => [
-        {
-          ref: inputRef,
-          scanChildren: false,
-        },
-        {
-          ref: listRef,
-          scanChildren: true,
-        },
-      ],
-      [],
-    )
-  const { isOpen, setIsOpen } = useScanToggleList(scanTargets, filtered)
-
-  useUnFocus(() => setIsOpen(false), rootRef)
-
-  const typing = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isOpen) setIsOpen(true)
-    setWord(e.target.value)
-  }
-
-  const select = (item: ChoiceItem) => {
-    setIsOpen(false)
-    setWord(item.label)
-    inputRef.current?.focus()
-  }
+  const { word, filtered, isOpen, typing, select, toggleOpen } =
+    useAutoComplete(choices, inputRef, listRef, rootRef)
 
   const inputId = useMemo(() => nanoid(), [])
   const listId = useMemo(() => nanoid(), [])
@@ -75,10 +45,7 @@ export const AutoComplete = ({ label, choices }: AutoCompleteProps) => {
         value={word}
         onChange={typing}
       />
-      <ToggleArrowButton
-        isOpen={isOpen}
-        onClick={() => setIsOpen(flg => !flg)}
-      />
+      <ToggleArrowButton isOpen={isOpen} onClick={toggleOpen} />
       <SelectList
         label={label}
         items={filtered}
