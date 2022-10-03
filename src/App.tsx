@@ -3,11 +3,12 @@ import { faker } from "@faker-js/faker"
 import { ChoiceItem } from "./ComboBox/types/ChoiceItem"
 import _ from "lodash"
 import { createGlobalStyle } from "styled-components"
+import { ArtistInput } from "./SongSearch/ArtistInput"
 
 const PageStyle = createGlobalStyle`
   body {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,7 +50,7 @@ function App() {
   return (
     <>
       <PageStyle />
-      <ComboBox choices={options} label="cat names" />
+      <ArtistInput />
     </>
   )
 }
