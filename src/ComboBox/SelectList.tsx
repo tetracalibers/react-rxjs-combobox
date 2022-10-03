@@ -4,6 +4,7 @@ import {
   ForwardedRef,
   forwardRef,
   KeyboardEvent,
+  useCallback,
 } from "react"
 import styled from "styled-components"
 import { ChoiceItem } from "./types/ChoiceItem"
@@ -93,30 +94,28 @@ const _SelectList = (
   { items, label, id, hidden, onSelectItem, ...props }: SelectListProps,
   ref: ForwardedRef<HTMLUListElement>,
 ) => {
-  const name = _.snakeCase(label)
-  const getItemKey = (value: string | number) =>
-    `${name}__${_.snakeCase(value.toString())}`
-
-  const selectByEnter = (e: KeyboardEvent<HTMLLIElement>, item: ChoiceItem) => {
-    if (e.key === "Enter") {
-      onSelectItem && onSelectItem(item)
-    }
-  }
+  const selectByEnter = useCallback(
+    (e: KeyboardEvent<HTMLLIElement>, item: ChoiceItem) => {
+      if (e.key === "Enter") {
+        onSelectItem && onSelectItem(item)
+      }
+    },
+    [],
+  )
 
   return (
     <Ul {...props} role="listbox" id={id} ref={ref}>
       {!hidden &&
-        items.map((item, idx) => (
+        items.map(item => (
           <li
-            key={getItemKey(item.value)}
+            key={`${id}__item_${item.value}`}
             role="option"
             aria-selected="false"
             tabIndex={-1}
-            id={`${id}__item_${idx}`}
             onClick={() => onSelectItem && onSelectItem(item)}
             onKeyDown={e => selectByEnter(e, item)}
           >
-            {item.label ?? item.value}
+            {item.label}
           </li>
         ))}
     </Ul>

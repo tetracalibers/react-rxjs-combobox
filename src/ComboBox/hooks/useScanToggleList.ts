@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from "react"
+import { RefObject, useLayoutEffect, useState } from "react"
 import { ChoiceItem } from "../types/ChoiceItem"
 import { fromEvent, merge } from "rxjs"
 
@@ -50,28 +50,24 @@ export const useScanToggleList = <T extends HTMLElement>(
 ) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  useEffect(() => {
-    const elems = getElems(targets)
+  useLayoutEffect(() => {
     const keyEvt$ = getKeyEvent$(targets)
-
-    const first = elems[0]
-    const next = pickSibling(elems, 1)
-    const prev = pickSibling(elems, -1)
+    const elems = getElems(targets)
 
     const keyEventSubscription = keyEvt$.subscribe(e => {
       const key = e.key
       if (key === "ArrowDown") {
         if (!isOpen) setIsOpen(true)
-        return next(e)?.focus()
+        return pickSibling(elems, 1)(e)?.focus()
       }
       if (key === "ArrowUp") {
-        return prev(e)?.focus()
+        return pickSibling(elems, -1)(e)?.focus()
       }
       if (key === "Tab") {
         return setIsOpen(false)
       }
       if (key === "Escape") {
-        first.focus()
+        elems[0].focus()
         return setIsOpen(false)
       }
     })
@@ -79,7 +75,7 @@ export const useScanToggleList = <T extends HTMLElement>(
     return () => {
       keyEventSubscription.unsubscribe()
     }
-  }, [visibleItems, isOpen])
+  }, [isOpen, visibleItems])
 
   return { isOpen, setIsOpen }
 }

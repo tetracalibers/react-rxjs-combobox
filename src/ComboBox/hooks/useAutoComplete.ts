@@ -1,4 +1,4 @@
-import { ChangeEvent, RefObject, useMemo } from "react"
+import { ChangeEvent, RefObject, useCallback, useMemo } from "react"
 import { ChoiceItem } from "../types/ChoiceItem"
 import { useInputFilter } from "./useInputFilter"
 import { ScanTarget, useScanToggleList } from "./useScanToggleList"
@@ -30,18 +30,18 @@ export const useAutoComplete = <ROOT extends HTMLElement = HTMLDivElement>(
 
   useUnFocus(() => setIsOpen(false), rootRef)
 
-  const typing = (e: ChangeEvent<HTMLInputElement>) => {
+  const typing = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!isOpen) setIsOpen(true)
     setWord(e.target.value)
-  }
+  }, [])
 
-  const select = (item: ChoiceItem) => {
+  const select = useCallback((item: ChoiceItem) => {
     setIsOpen(false)
     setWord(item.label)
     inputRef.current?.focus()
-  }
+  }, [])
 
-  const toggleOpen = () => setIsOpen(flag => !flag)
+  const toggleOpen = useCallback(() => setIsOpen(flag => !flag), [])
 
   return {
     word,
