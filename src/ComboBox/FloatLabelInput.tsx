@@ -1,8 +1,8 @@
-import { VisuallyHidden } from "@polym/a11y"
-import { ComponentPropsWithRef, ForwardedRef, forwardRef } from "react"
+import { VisuallyHidden as _VisuallyHidden } from "@polym/a11y"
+import { ComponentPropsWithRef, ForwardedRef, forwardRef, memo } from "react"
 import styled from "styled-components"
 
-const Root = styled.div`
+const _Root = styled.div`
   width: 100%;
 `
 
@@ -62,6 +62,9 @@ const Label = styled.label`
     color: var(--float-color);
   }
 `
+
+const Root = memo(_Root)
+const VisuallyHidden = memo(_VisuallyHidden)
 
 interface FloatLabelInputProps extends ComponentPropsWithRef<"input"> {
   label: string

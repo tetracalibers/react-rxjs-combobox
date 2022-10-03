@@ -1,4 +1,4 @@
-import { RefObject, useLayoutEffect, useState } from "react"
+import { RefObject, useCallback, useLayoutEffect, useState } from "react"
 import { ChoiceItem } from "../types/ChoiceItem"
 import { fromEvent, merge } from "rxjs"
 
@@ -35,26 +35,15 @@ const getElems = <T extends HTMLElement>(
     .flat()
 }
 
-const getKeyEvent$ = <T extends HTMLElement>(targets: ScanTarget<T>[]) => {
-  const keyEvtByRef$ = targets
-    .map(({ ref }) =>
-      ref.current ? fromEvent<KeyboardEvent>(ref.current, "keydown") : [],
-    )
-    .flat()
-  return merge(...keyEvtByRef$)
-}
-
 export const useScanToggleList = <T extends HTMLElement>(
   targets: ScanTarget<T>[],
   visibleItems: ChoiceItem[],
 ) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  useLayoutEffect(() => {
-    const keyEvt$ = getKeyEvent$(targets)
-    const elems = getElems(targets)
-
-    const keyEventSubscription = keyEvt$.subscribe(e => {
+  const onKeyStroke = useCallback(
+    (e: KeyboardEvent) => {
+      const elems = getElems(targets)
       const key = e.key
       if (key === "ArrowDown") {
         if (!isOpen) setIsOpen(true)
@@ -70,12 +59,23 @@ export const useScanToggleList = <T extends HTMLElement>(
         elems[0].focus()
         return setIsOpen(false)
       }
-    })
+    },
+    [visibleItems, isOpen],
+  )
+
+  useLayoutEffect(() => {
+    const keyEvtByRef$ = targets
+      .map(({ ref }) =>
+        ref.current ? fromEvent<KeyboardEvent>(ref.current, "keydown") : [],
+      )
+      .flat()
+    const keyEvt$ = merge(...keyEvtByRef$)
+    const keyEventSubscription = keyEvt$.subscribe(e => onKeyStroke(e))
 
     return () => {
       keyEventSubscription.unsubscribe()
     }
-  }, [isOpen, visibleItems])
+  }, [])
 
   return { isOpen, setIsOpen }
 }

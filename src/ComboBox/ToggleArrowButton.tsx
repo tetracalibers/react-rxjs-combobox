@@ -1,10 +1,12 @@
 import { IconButton } from "./IconButton"
 import { VscChevronDown } from "react-icons/vsc"
 import styled from "styled-components"
-import { ComponentPropsWithRef, forwardRef, ForwardedRef } from "react"
+import { ComponentPropsWithRef, forwardRef, ForwardedRef, memo } from "react"
+
+const ArrowIcon = memo(VscChevronDown)
 
 const ArrowIconButton = styled(IconButton).attrs({
-  icon: <VscChevronDown />,
+  icon: <ArrowIcon />,
 })`
   --icon-size: 1.5rem;
   --icon-color: #b1b2ff;
@@ -51,4 +53,4 @@ const _ToggleArrowButton = (
   )
 }
 
-export const ToggleArrowButton = forwardRef(_ToggleArrowButton)
+export const ToggleArrowButton = memo(forwardRef(_ToggleArrowButton))
