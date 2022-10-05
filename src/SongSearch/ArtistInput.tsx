@@ -1,79 +1,44 @@
-import { useEffect, useRef, useState } from "react"
+import { nanoid } from "nanoid"
+import { ChangeEvent, memo, useEffect, useMemo, useRef, useState } from "react"
 import {
+  BehaviorSubject,
   catchError,
   debounceTime,
   exhaustMap,
-  fromEvent,
   map,
   of,
   switchMap,
+  tap,
 } from "rxjs"
 import { fromFetch } from "rxjs/fetch"
+import styled from "styled-components"
+import { FloatLabelInput } from "../ComboBox/FloatLabelInput"
+import { SelectList } from "../ComboBox/SelectList"
+import { ChoiceItem } from "../ComboBox/types/ChoiceItem"
+import { getQueryUrl } from "./hooks/useiTunesAPI"
+import { ResponseJson } from "./types/ResponseJson"
+import { getArtistSearchParameters } from "./utility/fetch"
 
-type Parameters = {
-  mode?: string
-  country?: string
-  lang?: string
-  entity: string
-  attribute: string
-  term: string
-  sort?: string
-  limit?: number
-  options?: { [t in string]: string }
-}
+const _Root = styled.div`
+  display: flex;
+  position: relative;
+  width: 100%;
+`
 
-const getQueryUrl = ({
-  mode = "search",
-  country = "jp",
-  lang = "ja_jp",
-  entity,
-  attribute,
-  term,
-  sort = "popular",
-  limit = 200,
-  options = {},
-}: Parameters) => {
-  const optionsParam = Object.keys(options).map(
-    key => `&${key}=${options[key]}`,
-  )
-
-  const byModeParam =
-    mode == "search" ? `&term=${term}&attribute=${attribute}` : `&sort=${sort}`
-
-  return `https://itunes.apple.com/${mode}?lang=${lang}&entity=${entity}&country=${country}${byModeParam}&limit=${limit}${optionsParam}`
-}
-
-const getArtistSearchParameters = (term: string) => ({
-  entity: "musicArtist",
-  attribute: "artistTerm",
-  term,
-})
-
-type ArtistInfo = {
-  amgArtistId: number
-  artistId: number
-  artistLinkUrl: string
-  artistName: string
-  artistType: string
-  primaryGenreId: number
-  primaryGenreName: string
-  wrapperType: string
-}
-
-type ResponseJson = {
-  results: ArtistInfo[]
-  resultCount: number
-}
+const Root = memo(_Root)
 
 export const ArtistInput = () => {
-  const [result, setResult] = useState<string[]>([])
+  const [result, setResult] = useState<ChoiceItem<number>[]>([])
+  const [artistId, setArtistId] = useState<number>()
+  const [word, setWord] = useState("")
+
+  const subject$ = useMemo(() => new BehaviorSubject<string>(""), [])
 
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const word$ = fromEvent(inputRef.current!, "input")
+    const word$ = subject$
       .pipe(
-        map(e => (e.target as HTMLInputElement)?.value),
         debounceTime(500),
         map(getArtistSearchParameters),
         map(getQueryUrl),
@@ -86,8 +51,13 @@ export const ArtistInput = () => {
               // サーバーエラー
               return of({ error: true, message: `Error ${res.status}` })
             }),
-            map((obj: ResponseJson) =>
-              setResult(obj.results.map(o => o.artistName)),
+            tap((obj: ResponseJson) =>
+              setResult(
+                obj.results.map(o => ({
+                  label: o.artistName,
+                  value: o.artistId,
+                })),
+              ),
             ),
             catchError(err => {
               // ネットワークエラーとか
@@ -102,14 +72,40 @@ export const ArtistInput = () => {
     return () => word$.unsubscribe()
   }, [])
 
+  const label = useMemo(() => "Artist Name", [])
+
+  const inputId = useMemo(() => nanoid(), [])
+  const listId = useMemo(() => nanoid(), [])
+
+  const typing = (e: ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value
+    setWord(v)
+    subject$.next(v)
+  }
+
+  const select = (item: ChoiceItem<number>) => {
+    setArtistId(item.value)
+    setResult([])
+    setWord(item.label)
+  }
+
   return (
-    <>
-      <input type="text" placeholder="Artist Name" ref={inputRef} />
-      <ul>
-        {result.map(result => (
-          <li>{result}</li>
-        ))}
-      </ul>
-    </>
+    <Root>
+      <FloatLabelInput
+        type="text"
+        label={label}
+        id={inputId}
+        ref={inputRef}
+        value={word}
+        onChange={typing}
+      />
+      <SelectList
+        label={label}
+        id={listId}
+        items={result}
+        hidden={false}
+        onSelectItem={select}
+      />
+    </Root>
   )
 }

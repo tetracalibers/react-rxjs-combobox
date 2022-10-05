@@ -1,4 +1,4 @@
-export type ChoiceItem = {
+export type ChoiceItem<T extends string | number> = {
   label: string
-  value: string
+  value: T
 }

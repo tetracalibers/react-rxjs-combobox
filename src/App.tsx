@@ -1,9 +1,8 @@
-import { ComboBox } from "./ComboBox"
 import { faker } from "@faker-js/faker"
 import { ChoiceItem } from "./ComboBox/types/ChoiceItem"
 import _ from "lodash"
 import { createGlobalStyle } from "styled-components"
-import { ArtistInput } from "./SongSearch/ArtistInput"
+import { SongSearch } from "./SongSearch"
 
 const PageStyle = createGlobalStyle`
   body {
@@ -50,7 +49,7 @@ function App() {
   return (
     <>
       <PageStyle />
-      <ArtistInput />
+      <SongSearch />
     </>
   )
 }
