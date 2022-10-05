@@ -4,6 +4,7 @@ import _ from "lodash"
 import { createGlobalStyle } from "styled-components"
 import { SongSearch } from "./SongSearch"
 import { ComboBox } from "./ComboBox"
+import { Scrollify } from "./Scrollify"
 
 const PageStyle = createGlobalStyle`
   body {
@@ -49,8 +50,16 @@ const options: ChoiceItem<string>[] = [...new Array(50)].map(() => {
 function App() {
   return (
     <>
+      {/* <PageStyle />
+      <ComboBox choices={options} label="cat names" /> */}
       <PageStyle />
-      <ComboBox choices={options} label="cat names" />
+      <Scrollify>
+        <div>page1</div>
+        <div>page2</div>
+        <div>page3</div>
+        <div>page4</div>
+        <div>page5</div>
+      </Scrollify>
     </>
   )
 }
