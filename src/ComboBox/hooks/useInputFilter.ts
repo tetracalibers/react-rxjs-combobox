@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react"
 import { ChoiceItem } from "../types/ChoiceItem"
 import { BehaviorSubject } from "rxjs"
 
-export const useInputFilter = (all: ChoiceItem[]) => {
+export const useInputFilter = (all: ChoiceItem<string>[]) => {
   const [filtered, setFiltered] = useState(all)
   const [word, setWord] = useState("")
 

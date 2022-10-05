@@ -6,11 +6,13 @@ import {
   KeyboardEvent,
   memo,
   useCallback,
+  useRef,
 } from "react"
 import styled from "styled-components"
+import { useVirtualScroll } from "./hooks/useVirtualScroll"
 import { ChoiceItem } from "./types/ChoiceItem"
 
-const _Ul = styled.ul`
+const Virtual__VisibleArea = styled.div`
   --bg-color: #f7f9ff;
   --shadow-color: #b1b2ff;
   --float-color: #8c1bab;
@@ -71,6 +73,15 @@ const _Ul = styled.ul`
   flex-direction: column;
 `
 
+const Virtual__HasListHeight = styled.div`
+  height: fit-content;
+`
+
+const _Ul = styled.ul`
+  padding: 0;
+  margin: 0;
+`
+
 const _Li = styled.li`
   &[role="option"] {
     display: block;
@@ -89,19 +100,31 @@ const Ul = memo(_Ul)
 const Li = memo(_Li)
 
 interface SelectListProps extends ComponentPropsWithRef<"ul"> {
-  items: ChoiceItem[]
+  items: ChoiceItem<string>[]
   label: string
   id: string
   hidden: boolean
-  onSelectItem?: (item: ChoiceItem) => void
+  onSelectItem?: (item: ChoiceItem<string>) => void
 }
+
+const vAreaHeight = 192
+const vItemHeight = 56
 
 const _SelectList = (
   { items, label, id, hidden, onSelectItem, ...props }: SelectListProps,
   ref: ForwardedRef<HTMLUListElement>,
 ) => {
+  const vRootRef = useRef<HTMLDivElement>(null)
+
+  const { renderItems, startIdx } = useVirtualScroll({
+    rootRef: vRootRef,
+    items,
+    vAreaHeight,
+    vItemHeight,
+  })
+
   const selectByEnter = useCallback(
-    (e: KeyboardEvent<HTMLLIElement>, item: ChoiceItem) => {
+    (e: KeyboardEvent<HTMLLIElement>, item: ChoiceItem<string>) => {
       if (e.key === "Enter") {
         onSelectItem && onSelectItem(item)
       }
@@ -110,23 +133,33 @@ const _SelectList = (
   )
 
   return (
-    <Ul {...props} role="listbox" id={id} ref={ref}>
-      {!hidden &&
-        items.map(item => (
-          <Li
-            key={`${id}__item_${item.value}`}
-            role="option"
-            aria-selected="false"
-            tabIndex={-1}
-            onClick={() => onSelectItem && onSelectItem(item)}
-            onKeyDown={(e: KeyboardEvent<HTMLLIElement>) =>
-              selectByEnter(e, item)
-            }
-          >
-            {item.label}
-          </Li>
-        ))}
-    </Ul>
+    <Virtual__VisibleArea ref={vRootRef}>
+      <Virtual__HasListHeight>
+        <Ul
+          {...props}
+          role="listbox"
+          id={id}
+          ref={ref}
+          style={{ position: "relative", top: startIdx * vItemHeight }}
+        >
+          {!hidden &&
+            renderItems.map(item => (
+              <Li
+                key={`${id}__item_${item.value}`}
+                role="option"
+                aria-selected="false"
+                tabIndex={-1}
+                onClick={() => onSelectItem && onSelectItem(item)}
+                onKeyDown={(e: KeyboardEvent<HTMLLIElement>) =>
+                  selectByEnter(e, item)
+                }
+              >
+                {item.label}
+              </Li>
+            ))}
+        </Ul>
+      </Virtual__HasListHeight>
+    </Virtual__VisibleArea>
   )
 }
 

@@ -5,7 +5,7 @@ import { ScanTarget, useScanToggleList } from "./useScanToggleList"
 import { useUnFocus } from "./useUnFocus"
 
 export const useAutoComplete = <ROOT extends HTMLElement = HTMLDivElement>(
-  options: ChoiceItem[],
+  options: ChoiceItem<string>[],
   inputRef: RefObject<HTMLInputElement>,
   listRef: RefObject<HTMLUListElement>,
   rootRef: RefObject<ROOT>,
@@ -35,7 +35,7 @@ export const useAutoComplete = <ROOT extends HTMLElement = HTMLDivElement>(
     setWord(e.target.value)
   }, [])
 
-  const select = useCallback((item: ChoiceItem) => {
+  const select = useCallback((item: ChoiceItem<string>) => {
     setIsOpen(false)
     setWord(item.label)
     inputRef.current?.focus()

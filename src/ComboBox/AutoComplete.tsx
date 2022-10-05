@@ -17,7 +17,7 @@ const Root = memo(_Root)
 
 type AutoCompleteProps = {
   label: string
-  choices: ChoiceItem[]
+  choices: ChoiceItem<string>[]
 }
 
 const _AutoComplete = ({ label, choices }: AutoCompleteProps) => {

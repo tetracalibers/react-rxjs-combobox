@@ -3,6 +3,7 @@ import { ChoiceItem } from "./ComboBox/types/ChoiceItem"
 import _ from "lodash"
 import { createGlobalStyle } from "styled-components"
 import { SongSearch } from "./SongSearch"
+import { ComboBox } from "./ComboBox"
 
 const PageStyle = createGlobalStyle`
   body {
@@ -38,7 +39,7 @@ const PageStyle = createGlobalStyle`
   }
 `
 
-const options: ChoiceItem[] = [...new Array(50)].map(() => {
+const options: ChoiceItem<string>[] = [...new Array(50)].map(() => {
   return {
     label: faker.animal.cat(),
     value: faker.datatype.uuid(),
@@ -49,7 +50,7 @@ function App() {
   return (
     <>
       <PageStyle />
-      <SongSearch />
+      <ComboBox choices={options} label="cat names" />
     </>
   )
 }

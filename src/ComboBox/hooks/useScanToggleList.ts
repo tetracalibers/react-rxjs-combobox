@@ -37,7 +37,7 @@ const getElems = <T extends HTMLElement>(
 
 export const useScanToggleList = <T extends HTMLElement>(
   targets: ScanTarget<T>[],
-  visibleItems: ChoiceItem[],
+  visibleItems: ChoiceItem<string>[],
 ) => {
   const [isOpen, setIsOpen] = useState(false)
 
